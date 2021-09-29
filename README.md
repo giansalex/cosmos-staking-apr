@@ -1,7 +1,7 @@
 # Cosmos staking APR
 
 Formula to calculate staking APR on Cosmos chains.
-
+> No validator commission is included
 
 ## Run
 
