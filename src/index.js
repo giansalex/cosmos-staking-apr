@@ -54,7 +54,7 @@ function calculateActualAPR(params, nominalAPR, blocksYearActual) {
 
 async function start() {
   try {
-      const API_URL = "https://lcd.juno.giansalex.dev";
+      const apiUrl = process.env.LCD_URL;
       const lcdApi = axios.create({
         baseURL: API_URL,
         headers: {
