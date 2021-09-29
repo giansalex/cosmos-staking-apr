@@ -60,8 +60,9 @@ async function start() {
         baseURL: apiUrl,
         headers: {
             'Content-Type': 'application/json; charset=utf-8',
-            'Accept': 'application/json'
-        }
+            'Accept': 'application/json',
+        },
+        timeout: 5000,
       });
 
       const params = await getParams(lcdApi);
