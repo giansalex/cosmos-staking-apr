@@ -1,11 +1,12 @@
 const axios = require('axios').default;
 
-async function getParams(lcdApi, denom) {
+async function getParams(lcdApi) {
   let response = await lcdApi.get("/cosmos/mint/v1beta1/annual_provisions");
 
   const annualProvisions = Number(response.data.annual_provisions); //string
   response = await lcdApi.get("/cosmos/mint/v1beta1/params");
   const blocksPerYear =  Number(response.data.params.blocks_per_year); //string
+  const denom = response.data.params.mint_denom;
 
   response = await lcdApi.get("/cosmos/mint/v1beta1/inflation");
   const inflation = Number(response.data.inflation); //string
@@ -56,14 +57,14 @@ async function start() {
   try {
       const apiUrl = process.env.LCD_URL;
       const lcdApi = axios.create({
-        baseURL: API_URL,
+        baseURL: apiUrl,
         headers: {
             'Content-Type': 'application/json; charset=utf-8',
             'Accept': 'application/json'
         }
       });
 
-      const params = await getParams(lcdApi, "ujuno");
+      const params = await getParams(lcdApi);
       const blocksYearActual = await getBlocksPerYearActual(lcdApi);
       const nominalAPR = calculateNominalAPR(params);
       const actualAPR = calculateActualAPR(params, nominalAPR, blocksYearActual);
