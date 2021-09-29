@@ -1,0 +1,10 @@
+APR
+
+Annual Provision = (Current Total Supply) * (Inflation Rate)
+blockProvision = Annual Provision / blocks_per_Year-Param
+Actual Annual Provision = blockProvision * blocks_per_Year-Real
+
+Nominal APR = [Inflation * (1-Community Tax)] / Bonded Tokens Ratio ;
+Actual Staking APR = (Nominal APR) * [(Actual Annual Provision) / (Annual Provision)]
+
+Final Staking APR = (Actual Staking APR) * (1-Validator’s commission)
