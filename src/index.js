@@ -47,7 +47,7 @@ async function getBlocksPerYearActual(lcdApi) {
 }
 
 function calculateActualAPR(params, nominalAPR, blocksYearActual) {
-  const blockProvision = Math.ceil(params.annualProvisions / params.blocksPerYear);
+  const blockProvision = params.annualProvisions / params.blocksPerYear;
   const actualProvision = blockProvision * blocksYearActual;
   return nominalAPR * (actualProvision / params.annualProvisions);
 }
