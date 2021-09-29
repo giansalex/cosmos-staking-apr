@@ -65,11 +65,11 @@ async function start() {
 
       const params = await getParams(lcdApi, "ujuno");
       const blocksYearActual = await getBlocksPerYearActual(lcdApi);
-      console.log(blocksYearActual);
-      console.log(params);
       const nominalAPR = calculateNominalAPR(params);
-      console.log(nominalAPR * 100, "%");
-      console.log(calculateActualAPR(params, nominalAPR, blocksYearActual) * 100, "%");
+      const actualAPR = calculateActualAPR(params, nominalAPR, blocksYearActual);
+
+      console.log(`Nominal APR: ${nominalAPR * 100} %`);
+      console.log(`RealTime APR: ${actualAPR * 100} %`);
   } catch (error) {
       console.log(error);
       return process.exit(-1);
