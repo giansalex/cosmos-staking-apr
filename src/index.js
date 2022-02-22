@@ -14,8 +14,8 @@ async function getParams(lcdApi) {
   response = await lcdApi.get("/cosmos/staking/v1beta1/pool");
   const bondedTokens = Number(response.data.pool.bonded_tokens); //string
 
-  response = await lcdApi.get("/cosmos/bank/v1beta1/supply");
-  const supply = Number(response.data.supply.find(p => p.denom === denom).amount); //string
+  response = await lcdApi.get("/cosmos/bank/v1beta1/supply/" + denom);
+  const supply = Number(response.data.amount.amount); //string
 
   response = await lcdApi.get("/cosmos/distribution/v1beta1/params");
   const communityTax = Number(response.data.params.community_tax); //string
@@ -62,7 +62,7 @@ async function start() {
             'Content-Type': 'application/json; charset=utf-8',
             'Accept': 'application/json',
         },
-        timeout: 5000,
+        timeout: 10000,
       });
 
       const params = await getParams(lcdApi);
