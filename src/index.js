@@ -14,9 +14,6 @@ async function getParams(lcdApi) {
   response = await lcdApi.get("/cosmos/staking/v1beta1/pool");
   const bondedTokens = Number(response.data.pool.bonded_tokens); //string
 
-  response = await lcdApi.get("/cosmos/bank/v1beta1/supply/" + denom);
-  const supply = Number(response.data.amount.amount); //string
-
   response = await lcdApi.get("/cosmos/distribution/v1beta1/params");
   const communityTax = Number(response.data.params.community_tax); //string
 
@@ -25,32 +22,31 @@ async function getParams(lcdApi) {
     blocksPerYear,
     inflation,
     bondedTokens,
-    supply,
     communityTax
   }
 }
 
 function calculateNominalAPR(params) {
-  const bondedRatio = params.bondedTokens / params.supply;
-  return params.inflation * (1 - params.communityTax) / bondedRatio;
+  return params.annualProvisions * (1 - params.communityTax) / params.bondedTokens;
 }
 
-async function getBlocksPerYearActual(lcdApi) {
+async function getBlocksPerYearReal(lcdApi) {
   let response = await lcdApi.get("/blocks/latest");
   const block1 = response.data.block.header;
+  const blockRange = Number(block1.height) > 10000 ? 10000 : 1;
 
-  response = await lcdApi.get("/blocks/" + (Number(block1.height) - 1));
+  response = await lcdApi.get("/blocks/" + (Number(block1.height) - blockRange));
   const block2 = response.data.block.header;
 
   const yearMilisec = 31536000000;
-  const blockMilisec = new Date(block1.time) - new Date(block2.time);
+  const blockMilisec = (new Date(block1.time) - new Date(block2.time)) / blockRange;
   return Math.ceil(yearMilisec / blockMilisec);
 }
 
-function calculateActualAPR(params, nominalAPR, blocksYearActual) {
+function calculateRealAPR(params, nominalAPR, blocksYearReal) {
   const blockProvision = params.annualProvisions / params.blocksPerYear;
-  const actualProvision = blockProvision * blocksYearActual;
-  return nominalAPR * (actualProvision / params.annualProvisions);
+  const realProvision = blockProvision * blocksYearReal;
+  return nominalAPR * (realProvision / params.annualProvisions);
 }
 
 async function start() {
@@ -66,9 +62,9 @@ async function start() {
       });
 
       const params = await getParams(lcdApi);
-      const blocksYearActual = await getBlocksPerYearActual(lcdApi);
+      const blocksYearReal = await getBlocksPerYearReal(lcdApi);
       const nominalAPR = calculateNominalAPR(params);
-      const actualAPR = calculateActualAPR(params, nominalAPR, blocksYearActual);
+      const actualAPR = calculateRealAPR(params, nominalAPR, blocksYearReal);
 
       console.log(`Nominal APR: ${nominalAPR * 100} %`);
       console.log(`RealTime APR: ${actualAPR * 100} %`);

@@ -1,10 +1,12 @@
 APR
 
-Annual Provision = (Current Total Supply) * (Inflation Rate)
-blockProvision = Annual Provision / blocks_per_Year-Param
-Actual Annual Provision = blockProvision * blocks_per_Year-Real
+Annual Provision = GET /cosmos/mint/v1beta1/annual_provisions
+Bonded Tokens = GET /cosmos/staking/v1beta1/pool
 
-Nominal APR = [Inflation * (1-Community Tax)] / Bonded Tokens Ratio ;
-Actual Staking APR = (Nominal APR) * [(Actual Annual Provision) / (Annual Provision)]
+block_provision = Annual Provision / blocks_per_year-Param
+Real Annual Provision = block_provision * blocks_per_Year-Real
 
-Final Staking APR = (Actual Staking APR) * (1-Validator’s commission)
+Nominal APR = [Annual Provision * (1-Community Tax)] / Bonded Tokens ;
+Real Staking APR = (Nominal APR) * [(Real Annual Provision) / (Annual Provision)]
+
+Final Staking APR = (Real Staking APR) * (1-Validator’s commission)
