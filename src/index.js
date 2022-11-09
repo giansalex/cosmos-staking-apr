@@ -31,11 +31,11 @@ function calculateNominalAPR(params) {
 }
 
 async function getBlocksPerYearReal(lcdApi) {
-  let response = await lcdApi.get("/blocks/latest");
+  let response = await lcdApi.get("/cosmos/base/tendermint/v1beta1/blocks/latest");
   const block1 = response.data.block.header;
   const blockRange = Number(block1.height) > 10000 ? 10000 : 1;
 
-  response = await lcdApi.get("/blocks/" + (Number(block1.height) - blockRange));
+  response = await lcdApi.get("/cosmos/base/tendermint/v1beta1/blocks/" + (Number(block1.height) - blockRange));
   const block2 = response.data.block.header;
 
   const yearMilisec = 31536000000;
